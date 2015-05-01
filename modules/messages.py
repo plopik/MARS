@@ -46,7 +46,7 @@ def error_submission_history(msg,awardee):
 	return error_submission_history
 
 def error_length(data,msg,awardee):
-	error_length = msg["error_length"] % (awardee,msg["token"])
+	error_length = msg["error_length"] % (msg["token"],awardee)
 	return error_length
 
 # TOKEN MODULE FUNCTIONS
