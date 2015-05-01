@@ -55,7 +55,7 @@ def congrats_first_subject(msg):
 	return congrats_first_subject
 
 def congrats_first_body(data,msg,awardee):
-	congrats_first_body = msg["congrats_first_body"] % (msg["token"],msg["token"],msg["token"],data["running_subreddit"],data["running_username"],data["running_username"],data["running_subreddit"],awardee,msg["token"],data["running_subreddit"],data["running_subreddit"])
+	congrats_first_body = msg["congrats_first_body"] % (msg["token"],msg["token"],msg["token"],data["running_subreddit"],data["running_username"],data["running_subreddit"],awardee,msg["token"],data["running_subreddit"],data["running_subreddit"])
 	return congrats_first_body
 	
 # EOF
