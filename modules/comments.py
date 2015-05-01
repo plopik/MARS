@@ -129,15 +129,15 @@ def optional_checks(data,msg,r,token_comment,awarder,awardee_comment,awardee,tok
 	logging.debug("Optional Checks")
 	if check_awardee_not_author(data["check_ana"],token_comment.submission.author,awardee):
 		error_bad_recipient = messages.error_bad_recipient(data,msg,token_comment)
-		token_comment.reply(error_bad_recipient).distinguish()
+		reply_unique(data,token_comment,error_bad_recipient)
 		logging.info("Error Bad Recipient Sent")
 	elif check_awarder_to_awardee_history(data,msg,r,awardee_comment,awardee,token_comment,awarder):
 		error_submission_history = messages.error_submission_history(msg,awardee_comment.author.name)
-		token_comment.reply(error_submission_history).distinguish()
+		reply_unique(data,token_comment,error_submission_history)
 		logging.info("Error Submission History Sent")
 	elif check_length(data,token_comment.body,token_found):
 		error_length = messages.error_length(data,msg,awardee_comment.author.name)
-		token_comment.reply(error_length).distinguish()
+		reply_unique(data,token_comment,error_length)
 		logging.info("Error Length Sent")
 	else:
 		logging.debug("Token Valid - Beginning Award Process")
@@ -146,21 +146,23 @@ def optional_checks(data,msg,r,token_comment,awarder,awardee_comment,awardee,tok
 		token_comment.save()
 		logging.debug("Comment Saved")
 		edited_reply = False
-		for reply in token_comment.replies:
-			if reply.author:
-				logging.debug("Editing existing comment")
-				if str(reply.author.name).lower() == data["running_username"].lower():
-					confirmation = messages.confirm(data,msg,awardee_comment,awardee)
-					reply.edit(confirmation).distinguish()
-					edited_reply = True
-		if edited_reply == False:
-			logging.debug("Leaving new comment")
-			confirmation = messages.confirm(data,msg,awardee_comment,awardee)
-			token_comment.reply(confirmation).distinguish()
+		confirmation = messages.confirm(data, msg, awardee_comment, awardee)
+		reply_unique(data,token_comment,confirmation)
 		logging.info("Confirmation Message Sent")
 		wiki.start(data,r,token_comment,token_comment.author.name,awardee_comment.author.name,flair_count)
 		logging.info("Wiki Updates Complete")
 		wait()
+
+def reply_unique(data,comment,message):
+	edited_reply = False
+	for reply in comment.replies:
+		if reply.author and str(reply.author.name).lower() == data["running_username"].lower():
+			logging.debug("Editing existing comment")
+			reply.edit(message).distinguish()
+			edited_reply = True
+	if edited_reply == False:
+		logging.debug("Leaving new comment")
+		comment.reply(message).distinguish()
 
 def wait():
 	wait_time = 35
