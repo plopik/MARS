@@ -17,7 +17,38 @@ import time
 # Variables #
 #############
 
-history = []
+class History(object):
+	def __init__(self):
+		self.list_id = []
+		self.comments = dict()
+
+	def add(self,comment):
+		permalink = comment.permalink
+		if permalink not in self.comments:
+			self.list_id.append(permalink)
+		self.comments[permalink] = comment
+
+		if len(self.list_id) > 2000:
+			permalink_to_del = self.list_id[0]
+			del self.list_id[0]
+			del self.comments[permalink_to_del]
+
+	def is_new(self,comment):
+		permalink = comment.permalink
+		if permalink not in self.comments:
+			return True
+		else:
+			return self.comments[permalink].body != comment.body
+
+	def __contains__(self, comment):
+		permalink = comment.permalink
+		return permalink in self.comments
+
+	def __len__(self):
+		return len(self.list_id)
+
+
+history = History()
 
 # Functions #
 #############
@@ -45,8 +76,8 @@ def process_comments(data,msg,r,sub_comments):
 	logging.debug("Processing Comments")
 	running_username = str(data["running_username"]).lower()
 	for comment in sub_comments: # for each comment in batch
-		if comment not in history or comment.edited:
-			history.append(comment)
+		if history.is_new(comment) :
+			history.add(comment)
 			logging.debug("Comment History Count: " + str(len(history)))
 			if not comment.banned_by: # Ignores removed comments
 				comment_author = str(comment.author.name).lower()
