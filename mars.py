@@ -47,7 +47,7 @@ rootLogger.addHandler(consoleHandler)
 def mars(data):
 	# Screen Formatting
 	os.system("cls" if os.name == "nt" else "clear")
-	print "MARS - Modular Automated Reddit Script\n"
+	print "MARS - Modular Automated (for) Reddit Script\n"
 
 	data = config.check_environment(data)
 	
